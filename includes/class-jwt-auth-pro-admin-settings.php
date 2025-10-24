@@ -12,8 +12,8 @@
  * methods to retrieve configuration values used throughout the plugin.
  *
  * @package   JM_JWTAuthPro
- * @author    WordPress Developer
- * @copyright 2025 WordPress Developer
+ * @author    JuanMa Garrido
+ * @copyright 2025 JuanMa Garrido
  * @license   GPL-2.0-or-later
  * @since     2.0.0
  *

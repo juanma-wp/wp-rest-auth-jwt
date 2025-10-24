@@ -10,9 +10,9 @@
  * This is a backwards-compatible wrapper around the shared CookieConfig implementation
  * from wp-rest-auth-toolkit package.
  *
- * @package   WPRESTAuthJWT
- * @author    WordPress Developer
- * @copyright 2025 WordPress Developer
+ * @package   JM_JWTAuthPro
+ * @author    JuanMa Garrido
+ * @copyright 2025 JuanMa Garrido
  * @license   GPL-2.0-or-later
  * @since     1.0.0
  */

@@ -7,9 +7,9 @@
  * functions needed for analysis without loading unnecessary WordPress stubs or
  * external dependencies.
  *
- * @package   JM_JWTAuthProWPRestAPI
- * @author    WordPress Developer
- * @copyright 2025 WordPress Developer
+ * @package   JM_JWTAuthPro
+ * @author    JuanMa Garrido
+ * @copyright 2025 JuanMa Garrido
  * @license   GPL-2.0-or-later
  * @since     1.0.0
  */

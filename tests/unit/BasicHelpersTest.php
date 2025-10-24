@@ -6,9 +6,9 @@
  * These tests focus on WordPress-independent functionality like JWT encoding,
  * decoding, and base64 URL encoding/decoding.
  *
- * @package   WPRESTAuthJWT
- * @author    WordPress Developer
- * @copyright 2025 WordPress Developer
+ * @package   JM_JWTAuthPro
+ * @author    JuanMa Garrido
+ * @copyright 2025 JuanMa Garrido
  * @license   GPL-2.0-or-later
  * @since     1.0.0
  *
