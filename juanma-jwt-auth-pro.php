@@ -3,7 +3,7 @@
 /**
  * Plugin Name: JuanMa JWT Auth Pro
  * Description: Modern JWT authentication with refresh tokens for WordPress REST API - built for SPAs and mobile apps
- * Version: 1.1.0
+ * Version: 1.2.0
  * Author: Juan Manuel Garrido
  * Author URI: https://juanma.codes
  * Plugin URI: https://github.com/juanma-wp/jwt-auth-pro-wp-rest-api
@@ -54,7 +54,7 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 
 define( 'JWT_AUTH_PRO_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'JWT_AUTH_PRO_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'JWT_AUTH_PRO_VERSION', '1.1.0' );
+define( 'JWT_AUTH_PRO_VERSION', '1.2.0' );
 
 // Debug: Add a constant to check if plugin is loaded.
 if ( ! defined( 'JWT_AUTH_PRO_LOADED' ) ) {

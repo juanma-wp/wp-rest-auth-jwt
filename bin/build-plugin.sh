@@ -24,17 +24,17 @@ echo "==> Installing WP-CLI dist-archive command..."
 cd /tmp && wp package install wp-cli/dist-archive-command:@stable 2>/dev/null || true
 
 echo "==> Creating distribution archive..."
-cd /var/www/html/wp-content/plugins/jwt-auth-pro-wp-rest-api
+cd /var/www/html/wp-content/plugins/juanma-jwt-auth-pro
 
 # Extract version from main plugin file
-VERSION=$(grep -E "^\s*\*\s*Version:" jwt-auth-pro-wp-rest-api.php | sed -E 's/.*Version:\s*([0-9.]+).*/\1/')
+VERSION=$(grep -E "^\s*\*\s*Version:" juanma-jwt-auth-pro.php | sed -E 's/.*Version:\s*([0-9.]+).*/\1/')
 if [ -z "$VERSION" ]; then
     VERSION="${1:-1.0.0}"
 fi
 
 # Convert dots to hyphens for filename
 VERSION_HYPHENATED=$(echo "$VERSION" | tr '.' '-')
-OUTPUT_FILE="build/jwt-auth-pro-wp-rest-api-${VERSION_HYPHENATED}.zip"
+OUTPUT_FILE="build/juanma-jwt-auth-pro-${VERSION_HYPHENATED}.zip"
 
 # Create build directory and remove old archive
 mkdir -p build
