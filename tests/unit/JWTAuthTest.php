@@ -10,7 +10,7 @@ class JWTAuthTest extends TestCase {
 	/**
 	 * Auth JWT instance for testing.
 	 *
-	 * @var Auth_JWT
+	 * @var JuanMa_JWT_Auth_Pro
 	 */
 	private $auth_jwt;
 
@@ -21,7 +21,7 @@ class JWTAuthTest extends TestCase {
 		parent::setUp();
 
 		// Load the JWT auth class
-		if ( ! class_exists( 'Auth_JWT' ) ) {
+		if ( ! class_exists( 'JuanMa_JWT_Auth_Pro' ) ) {
 			require_once dirname( __DIR__, 2 ) . '/includes/class-auth-jwt.php';
 		}
 
@@ -31,25 +31,25 @@ class JWTAuthTest extends TestCase {
 		}
 
 		// Define constants for testing
-		if ( ! defined( 'JWT_AUTH_PRO_SECRET' ) ) {
-			define( 'JWT_AUTH_PRO_SECRET', 'test-secret-key-for-testing-only-jwt' );
+		if ( ! defined( 'JMJAP_SECRET' ) ) {
+			define( 'JMJAP_SECRET', 'test-secret-key-for-testing-only-jwt' );
 		}
-		if ( ! defined( 'JWT_AUTH_ACCESS_TTL' ) ) {
-			define( 'JWT_AUTH_ACCESS_TTL', 3600 );
+		if ( ! defined( 'JMJAP_ACCESS_TTL' ) ) {
+			define( 'JMJAP_ACCESS_TTL', 3600 );
 		}
-		if ( ! defined( 'JWT_AUTH_REFRESH_TTL' ) ) {
-			define( 'JWT_AUTH_REFRESH_TTL', 86400 );
+		if ( ! defined( 'JMJAP_REFRESH_TTL' ) ) {
+			define( 'JMJAP_REFRESH_TTL', 86400 );
 		}
 
-		$this->auth_jwt = new Auth_JWT();
+		$this->auth_jwt = new JuanMa_JWT_Auth_Pro();
 	}
 
 	/**
 	 * Test JWT auth class exists and can be instantiated.
 	 */
 	public function testJWTAuthClassExists(): void {
-		$this->assertTrue( class_exists( 'Auth_JWT' ) );
-		$this->assertInstanceOf( 'Auth_JWT', $this->auth_jwt );
+		$this->assertTrue( class_exists( 'JuanMa_JWT_Auth_Pro' ) );
+		$this->assertInstanceOf( 'JuanMa_JWT_Auth_Pro', $this->auth_jwt );
 	}
 
 	/**
@@ -163,14 +163,14 @@ class JWTAuthTest extends TestCase {
 	 */
 	public function testJWTConstants(): void {
 		// Test JWT constants are available
-		$this->assertTrue( defined( 'JWT_AUTH_PRO_SECRET' ) );
-		$this->assertTrue( defined( 'JWT_AUTH_ACCESS_TTL' ) );
-		$this->assertTrue( defined( 'JWT_AUTH_REFRESH_TTL' ) );
+		$this->assertTrue( defined( 'JMJAP_SECRET' ) );
+		$this->assertTrue( defined( 'JMJAP_ACCESS_TTL' ) );
+		$this->assertTrue( defined( 'JMJAP_REFRESH_TTL' ) );
 
 		// Test values are reasonable
-		$this->assertGreaterThan( 0, JWT_AUTH_ACCESS_TTL );
-		$this->assertGreaterThan( 0, JWT_AUTH_REFRESH_TTL );
-		$this->assertNotEmpty( JWT_AUTH_PRO_SECRET );
+		$this->assertGreaterThan( 0, JMJAP_ACCESS_TTL );
+		$this->assertGreaterThan( 0, JMJAP_REFRESH_TTL );
+		$this->assertNotEmpty( JMJAP_SECRET );
 	}
 
 	/**
@@ -178,11 +178,11 @@ class JWTAuthTest extends TestCase {
 	 */
 	public function testClassConstants(): void {
 		// Test class constants
-		$this->assertTrue( defined( 'Auth_JWT::REFRESH_COOKIE_NAME' ) );
-		$this->assertSame( 'wp_jwt_refresh_token', Auth_JWT::REFRESH_COOKIE_NAME );
+		$this->assertTrue( defined( 'JuanMa_JWT_Auth_Pro::REFRESH_COOKIE_NAME' ) );
+		$this->assertSame( 'wp_jwt_refresh_token', JuanMa_JWT_Auth_Pro::REFRESH_COOKIE_NAME );
 
-		$this->assertTrue( defined( 'Auth_JWT::ISSUER' ) );
-		$this->assertSame( 'wp-rest-auth-jwt', Auth_JWT::ISSUER );
+		$this->assertTrue( defined( 'JuanMa_JWT_Auth_Pro::ISSUER' ) );
+		$this->assertSame( 'wp-rest-auth-jwt', JuanMa_JWT_Auth_Pro::ISSUER );
 	}
 
 	/**
@@ -201,9 +201,9 @@ class JWTAuthTest extends TestCase {
 	 */
 	public function testJWTWorkflowIntegration(): void {
 		// Test a basic JWT workflow using helper functions
-		$secret = JWT_AUTH_PRO_SECRET;
+		$secret = JMJAP_SECRET;
 		$claims = array(
-			'iss' => Auth_JWT::ISSUER,
+			'iss' => JuanMa_JWT_Auth_Pro::ISSUER,
 			'aud' => 'test-audience',
 			'iat' => time(),
 			'exp' => time() + 3600,
@@ -217,7 +217,7 @@ class JWTAuthTest extends TestCase {
 		$decoded = wp_auth_jwt_decode( $token, $secret );
 		$this->assertIsArray( $decoded );
 		$this->assertSame( 123, $decoded['sub'] );
-		$this->assertSame( Auth_JWT::ISSUER, $decoded['iss'] );
+		$this->assertSame( JuanMa_JWT_Auth_Pro::ISSUER, $decoded['iss'] );
 	}
 
 	/**
@@ -279,14 +279,14 @@ class JWTAuthTest extends TestCase {
 	public function testTokenExpiration(): void {
 		// Create expired token
 		$expired_payload = array(
-			'iss' => Auth_JWT::ISSUER,
+			'iss' => JuanMa_JWT_Auth_Pro::ISSUER,
 			'exp' => time() - 3600, // Expired 1 hour ago
 			'iat' => time() - 3600,
 			'sub' => 123,
 		);
 
-		$expired_token = wp_auth_jwt_encode( $expired_payload, JWT_AUTH_PRO_SECRET );
-		$result        = wp_auth_jwt_decode( $expired_token, JWT_AUTH_PRO_SECRET );
+		$expired_token = wp_auth_jwt_encode( $expired_payload, JMJAP_SECRET );
+		$result        = wp_auth_jwt_decode( $expired_token, JMJAP_SECRET );
 
 		$this->assertFalse( $result, 'Expired token should not be valid' );
 	}
@@ -303,7 +303,7 @@ class JWTAuthTest extends TestCase {
 	 */
 	private function createValidJWTToken( $user_id = 123 ): string {
 		$payload = array(
-			'iss'  => Auth_JWT::ISSUER,
+			'iss'  => JuanMa_JWT_Auth_Pro::ISSUER,
 			'iat'  => time(),
 			'exp'  => time() + 3600,
 			'sub'  => $user_id,
@@ -314,7 +314,7 @@ class JWTAuthTest extends TestCase {
 			),
 		);
 
-		return wp_auth_jwt_encode( $payload, JWT_AUTH_PRO_SECRET );
+		return wp_auth_jwt_encode( $payload, JMJAP_SECRET );
 	}
 
 	/**

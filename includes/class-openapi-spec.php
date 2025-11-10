@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Generates and serves OpenAPI 3.0 specification for JWT endpoints.
  */
-class JWT_Auth_Pro_OpenAPI_Spec {
+class JuanMa_JWT_Auth_Pro_OpenAPI_Spec {
 
 	/**
 	 * REST API namespace.
@@ -52,7 +52,7 @@ class JWT_Auth_Pro_OpenAPI_Spec {
 	 * @param WP_REST_Request $request Request object.
 	 */
 	public function get_openapi_spec( WP_REST_Request $request ): void {
-		$yaml_file = JWT_AUTH_PRO_PLUGIN_DIR . 'openapi.yml';
+		$yaml_file = JMJAP_PLUGIN_DIR . 'openapi.yml';
 
 		if ( ! file_exists( $yaml_file ) ) {
 			status_header( 404 );

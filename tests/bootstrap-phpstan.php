@@ -26,21 +26,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // JWT constants that are referenced in code
-if ( ! defined( 'JWT_AUTH_PRO_SECRET' ) ) {
-	define( 'JWT_AUTH_PRO_SECRET', 'phpstan-analysis-secret' );
+if ( ! defined( 'JMJAP_SECRET' ) ) {
+	define( 'JMJAP_SECRET', 'phpstan-analysis-secret' );
 }
 
-if ( ! defined( 'JWT_AUTH_PRO_ACCESS_TTL' ) ) {
-	define( 'JWT_AUTH_PRO_ACCESS_TTL', 3600 );
+if ( ! defined( 'JMJAP_ACCESS_TTL' ) ) {
+	define( 'JMJAP_ACCESS_TTL', 3600 );
 }
 
-if ( ! defined( 'JWT_AUTH_PRO_REFRESH_TTL' ) ) {
-	define( 'JWT_AUTH_PRO_REFRESH_TTL', 2592000 );
+if ( ! defined( 'JMJAP_REFRESH_TTL' ) ) {
+	define( 'JMJAP_REFRESH_TTL', 2592000 );
 }
 
 // WordPress version constant
-if ( ! defined( 'JWT_AUTH_PRO_VERSION' ) ) {
-	define( 'JWT_AUTH_PRO_VERSION', '1.0.0' );
+if ( ! defined( 'JMJAP_VERSION' ) ) {
+	define( 'JMJAP_VERSION', '1.0.0' );
 }
 
 echo "Minimal PHPStan bootstrap loaded (memory optimized)\n";

@@ -3,7 +3,7 @@
 /**
  * Main Plugin Unit Tests
  *
- * Unit tests for the main JWT_Auth_Pro plugin class.
+ * Unit tests for the main JuanMa_JWT_Auth_Pro_Plugin plugin class.
  * Tests plugin initialization, constants, dependency loading,
  * and core functionality.
  *
@@ -27,7 +27,7 @@ class MainPluginTest extends TestCase
 	/**
 	 * Plugin instance for testing.
 	 *
-	 * @var JWT_Auth_Pro
+	 * @var JuanMa_JWT_Auth_Pro_Plugin
 	 */
 	private $plugin;
 
@@ -39,19 +39,19 @@ class MainPluginTest extends TestCase
 		parent::setUp();
 
 		// Load the main plugin class.
-		if (! class_exists('JWT_Auth_Pro')) {
-			require_once dirname(__DIR__, 2) . '/jwt-auth-pro-wp-rest-api.php';
+		if (! class_exists('JuanMa_JWT_Auth_Pro_Plugin')) {
+			require_once dirname(__DIR__, 2) . '/juanma-jwt-auth-pro.php';
 		}
 
 		// Define constants for testing.
-		if (! defined('JWT_AUTH_PRO_SECRET')) {
-			define('JWT_AUTH_PRO_SECRET', 'test-secret-key-for-testing-only-jwt');
+		if (! defined('JMJAP_SECRET')) {
+			define('JMJAP_SECRET', 'test-secret-key-for-testing-only-jwt');
 		}
-		if (! defined('JWT_AUTH_PRO_PLUGIN_DIR')) {
-			define('JWT_AUTH_PRO_PLUGIN_DIR', dirname(__DIR__, 2) . '/');
+		if (! defined('JMJAP_PLUGIN_DIR')) {
+			define('JMJAP_PLUGIN_DIR', dirname(__DIR__, 2) . '/');
 		}
 
-		$this->plugin = new JWT_Auth_Pro();
+		$this->plugin = new JuanMa_JWT_Auth_Pro_Plugin();
 	}
 
 	/**
@@ -59,8 +59,8 @@ class MainPluginTest extends TestCase
 	 */
 	public function testPluginClassExists(): void
 	{
-		$this->assertTrue(class_exists('JWT_Auth_Pro'));
-		$this->assertInstanceOf('JWT_Auth_Pro', $this->plugin);
+		$this->assertTrue(class_exists('JuanMa_JWT_Auth_Pro_Plugin'));
+		$this->assertInstanceOf('JuanMa_JWT_Auth_Pro_Plugin', $this->plugin);
 	}
 
 	/**
@@ -83,8 +83,8 @@ class MainPluginTest extends TestCase
 	{
 		// Test plugin constants.
 
-		$this->assertTrue(defined('JWT_AUTH_PRO_PLUGIN_DIR'));
-		$this->assertNotEmpty(JWT_AUTH_PRO_PLUGIN_DIR);
+		$this->assertTrue(defined('JMJAP_PLUGIN_DIR'));
+		$this->assertNotEmpty(JMJAP_PLUGIN_DIR);
 	}
 
 	/**
@@ -114,8 +114,8 @@ class MainPluginTest extends TestCase
 		$this->assertTrue(method_exists($this->plugin, 'setup_constants'));
 
 		// Test constants are properly set up.
-		$this->assertTrue(defined('JWT_AUTH_PRO_SECRET'));
-		$this->assertNotEmpty(JWT_AUTH_PRO_SECRET);
+		$this->assertTrue(defined('JMJAP_SECRET'));
+		$this->assertNotEmpty(JMJAP_SECRET);
 	}
 
 	/**
@@ -281,7 +281,7 @@ class MainPluginTest extends TestCase
 			$property = $reflection->getProperty('auth_jwt');
 			$property->setAccessible(true);
 			$auth_jwt = $property->getValue($this->plugin);
-			$this->assertInstanceOf('Auth_JWT', $auth_jwt);
+			$this->assertInstanceOf('JuanMa_JWT_Auth_Pro', $auth_jwt);
 		}
 
 		// Check for admin_settings property (only in admin).
@@ -290,7 +290,7 @@ class MainPluginTest extends TestCase
 			$property->setAccessible(true);
 			$admin_settings = $property->getValue($this->plugin);
 			// May be null if not in admin context.
-			$this->assertTrue(null === $admin_settings || $admin_settings instanceof JM_JWTAuthPro\JWT_Auth_Pro_Admin_Settings);
+			$this->assertTrue(null === $admin_settings || $admin_settings instanceof JM_JWTAuthPro\JuanMa_JWT_Auth_Pro_Admin_Settings);
 		}
 	}
 
@@ -300,8 +300,8 @@ class MainPluginTest extends TestCase
 	public function testSecretGeneration(): void
 	{
 		// Test that secret is generated if not exists.
-		$this->assertTrue(defined('JWT_AUTH_PRO_SECRET'));
-		$secret = JWT_AUTH_PRO_SECRET;
+		$this->assertTrue(defined('JMJAP_SECRET'));
+		$secret = JMJAP_SECRET;
 
 		$this->assertNotEmpty($secret);
 		$this->assertIsString($secret);
@@ -326,7 +326,7 @@ class MainPluginTest extends TestCase
 	{
 		// The plugin should be instantiated as a singleton through the main file.
 		// We can't test this directly in unit tests, but we can verify the structure.
-		$this->assertInstanceOf('JWT_Auth_Pro', $this->plugin);
+		$this->assertInstanceOf('JuanMa_JWT_Auth_Pro_Plugin', $this->plugin);
 	}
 
 	/**

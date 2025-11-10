@@ -35,7 +35,7 @@ use WPRestAuth\AuthToolkit\Http\Cookie;
  * Handles all JWT token operations including authentication, token generation,
  * validation, and refresh token management.
  */
-class Auth_JWT {
+class JuanMa_JWT_Auth_Pro {
 
 	const ISSUER                 = 'wp-rest-auth-jwt';
 	const REFRESH_COOKIE_NAME    = 'wp_jwt_refresh_token';
@@ -57,8 +57,8 @@ class Auth_JWT {
 		// Get secret but don't fail if not configured yet.
 		// Use a placeholder if not set - actual operations will check for valid secret.
 		$secret = '';
-		if ( defined( 'JWT_AUTH_PRO_SECRET' ) ) {
-			$secret = JWT_AUTH_PRO_SECRET;
+		if ( defined( 'JMJAP_SECRET' ) ) {
+			$secret = JMJAP_SECRET;
 		} else {
 			// Try to get from database (lazy load).
 			$jwt_settings = get_option( 'jwt_auth_pro_settings', array() );
@@ -148,12 +148,12 @@ class Auth_JWT {
 		// Get JWT settings with fallbacks.
 		// Always use direct database query for REST API requests.
 		$jwt_settings = get_option( 'jwt_auth_pro_settings', array() );
-		$secret       = defined( 'JWT_AUTH_PRO_SECRET' ) ? JWT_AUTH_PRO_SECRET : ( $jwt_settings['secret_key'] ?? '' );
-		$ttl          = defined( 'JWT_AUTH_PRO_ACCESS_TTL' ) ? JWT_AUTH_PRO_ACCESS_TTL : ( $jwt_settings['access_token_expiry'] ?? 3600 );
+		$secret       = defined( 'JMJAP_SECRET' ) ? JMJAP_SECRET : ( $jwt_settings['secret_key'] ?? '' );
+		$ttl          = defined( 'JMJAP_ACCESS_TTL' ) ? JMJAP_ACCESS_TTL : ( $jwt_settings['access_token_expiry'] ?? 3600 );
 
 		if ( empty( $secret ) ) {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				error_log( 'JWT Auth: Secret not configured. Please set JWT_AUTH_PRO_SECRET constant or configure in settings.' );
+				error_log( 'JWT Auth: Secret not configured. Please set JMJAP_SECRET constant or configure in settings.' );
 			}
 			throw new \Exception( 'JWT secret not configured' );
 		}
@@ -215,8 +215,8 @@ class Auth_JWT {
 		// Get JWT settings with fallbacks.
 		// Always use direct database query for REST API requests.
 		$jwt_settings = get_option( 'jwt_auth_pro_settings', array() );
-		$access_ttl   = defined( 'JWT_AUTH_PRO_ACCESS_TTL' ) ? JWT_AUTH_PRO_ACCESS_TTL : ( $jwt_settings['access_token_expiry'] ?? 3600 );
-		$refresh_ttl  = defined( 'JWT_AUTH_PRO_REFRESH_TTL' ) ? JWT_AUTH_PRO_REFRESH_TTL : ( $jwt_settings['refresh_token_expiry'] ?? 2592000 );
+		$access_ttl   = defined( 'JMJAP_ACCESS_TTL' ) ? JMJAP_ACCESS_TTL : ( $jwt_settings['access_token_expiry'] ?? 3600 );
+		$refresh_ttl  = defined( 'JMJAP_REFRESH_TTL' ) ? JMJAP_REFRESH_TTL : ( $jwt_settings['refresh_token_expiry'] ?? 2592000 );
 
 		// Generate refresh token.
 		$refresh_token   = wp_auth_jwt_generate_token( 64 );
@@ -292,9 +292,9 @@ class Auth_JWT {
 		$access_token  = $this->generate_access_token( (int) $user->ID, $access_claims );
 
 		// Optionally rotate refresh token for better security.
-		if ( apply_filters( 'wp_auth_jwt_rotate_refresh_token', true ) ) {
+		if ( apply_filters( 'juanma_jwt_auth_pro_rotate_refresh_token', true ) ) {
 			$new_refresh_token = wp_auth_jwt_generate_token( 64 );
-			$refresh_expires   = $now + JWT_AUTH_PRO_REFRESH_TTL;
+			$refresh_expires   = $now + JMJAP_REFRESH_TTL;
 
 			// Rotate refresh token (revoke old, create new).
 			$this->rotate_refresh_token( $refresh_token, $new_refresh_token, (int) $user->ID, $refresh_expires );
@@ -312,7 +312,7 @@ class Auth_JWT {
 			array(
 				'access_token' => $access_token,
 				'token_type'   => 'Bearer',
-				'expires_in'   => JWT_AUTH_PRO_ACCESS_TTL,
+				'expires_in'   => JMJAP_ACCESS_TTL,
 			),
 			'Token refreshed successfully'
 		);
@@ -388,7 +388,7 @@ class Auth_JWT {
 	 */
 	public function authenticate_bearer( string $token ) {
 		// Get secret lazily - check constant first, then admin settings.
-		$secret = defined( 'JWT_AUTH_PRO_SECRET' ) ? JWT_AUTH_PRO_SECRET : '';
+		$secret = defined( 'JMJAP_SECRET' ) ? JMJAP_SECRET : '';
 		if ( empty( $secret ) ) {
 			$jwt_settings = get_option( 'jwt_auth_pro_settings', array() );
 			$secret       = $jwt_settings['secret_key'] ?? '';

@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Admin settings class for JWT Auth Pro plugin.
  * Extends BaseAdminSettings to leverage common settings functionality.
  */
-class JWT_Auth_Pro_Admin_Settings extends BaseAdminSettings {
+class JuanMa_JWT_Auth_Pro_Admin_Settings extends BaseAdminSettings {
 
 
 
@@ -199,6 +199,14 @@ class JWT_Auth_Pro_Admin_Settings extends BaseAdminSettings {
 			return;
 		}
 
+		// Enqueue admin CSS
+		wp_enqueue_style(
+			'juanma-jwt-auth-pro-admin',
+			plugin_dir_url( __DIR__ ) . 'assets/admin.css',
+			array(),
+			'1.0.0'
+		);
+
 		wp_enqueue_script(
 			'juanma-jwt-auth-pro-admin',
 			plugin_dir_url( __DIR__ ) . 'assets/admin.js',
@@ -284,22 +292,6 @@ class JWT_Auth_Pro_Admin_Settings extends BaseAdminSettings {
 	private function render_api_docs_tab(): void {
 		$openapi_url = rest_url( 'jwt/v1/openapi' );
 		?>
-		<style>
-			.api-docs-container {
-				margin-top: 20px;
-				background: #fff;
-				border: 1px solid #ccc;
-				border-radius: 4px;
-			}
-
-			#swagger-ui {
-				max-width: 100%;
-			}
-
-			.topbar {
-				display: none;
-			}
-		</style>
 		<div class="api-docs-container">
 			<div id="swagger-ui"></div>
 		</div>
@@ -494,28 +486,6 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...</code></pre>
 			</p>
 			<?php
 		}
-		?>
-
-		<script>
-			jQuery(document).ready(function($) {
-				// Only bind generate secret if button exists (not readonly)
-				$('#generate_jwt_secret').click(function() {
-					const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-					let secret = '';
-					for (let i = 0; i < 64; i++) {
-						secret += chars.charAt(Math.floor(Math.random() * chars.length));
-					}
-					$('#jwt_secret_key').val(secret);
-				});
-
-				// Toggle show/hide for both readonly and editable fields
-				$('#toggle_jwt_secret').click(function() {
-					const field = $('#jwt_secret_key');
-					field.attr('type', 'password' === field.attr('type') ? 'text' : 'password');
-				});
-			});
-		</script>
-		<?php
 	}
 
 	/**

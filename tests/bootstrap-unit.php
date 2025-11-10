@@ -28,16 +28,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 	define( 'ABSPATH', '/tmp/' );
 }
 
-if ( ! defined( 'JWT_AUTH_PRO_SECRET' ) ) {
-	define( 'JWT_AUTH_PRO_SECRET', 'test-secret-for-unit-testing' );
+if ( ! defined( 'JMJAP_SECRET' ) ) {
+	define( 'JMJAP_SECRET', 'test-secret-for-unit-testing' );
 }
 
-if ( ! defined( 'JWT_AUTH_ACCESS_TTL' ) ) {
-	define( 'JWT_AUTH_ACCESS_TTL', 3600 );
+if ( ! defined( 'JMJAP_ACCESS_TTL' ) ) {
+	define( 'JMJAP_ACCESS_TTL', 3600 );
 }
 
-if ( ! defined( 'JWT_AUTH_REFRESH_TTL' ) ) {
-	define( 'JWT_AUTH_REFRESH_TTL', 2592000 );
+if ( ! defined( 'JMJAP_REFRESH_TTL' ) ) {
+	define( 'JMJAP_REFRESH_TTL', 2592000 );
 }
 
 // Mock only essential WordPress functions needed by helpers.php

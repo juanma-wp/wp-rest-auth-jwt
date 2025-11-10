@@ -11,7 +11,7 @@ class RestAPIIntegrationTest extends WP_UnitTestCase
 	/**
 	 * Auth JWT instance.
 	 *
-	 * @var Auth_JWT
+	 * @var JuanMa_JWT_Auth_Pro
 	 */
 	private $auth_jwt;
 
@@ -84,11 +84,11 @@ class RestAPIIntegrationTest extends WP_UnitTestCase
 		do_action('rest_api_init');
 
 		// Load JWT auth
-		if (! class_exists('Auth_JWT')) {
-			require_once JWT_AUTH_PRO_PLUGIN_DIR . 'includes/class-auth-jwt.php';
+		if (! class_exists('JuanMa_JWT_Auth_Pro')) {
+			require_once JMJAP_PLUGIN_DIR . 'includes/class-auth-jwt.php';
 		}
 
-		$this->auth_jwt = new Auth_JWT();
+		$this->auth_jwt = new JuanMa_JWT_Auth_Pro();
 		$this->auth_jwt->register_routes();
 	}
 
@@ -256,13 +256,13 @@ class RestAPIIntegrationTest extends WP_UnitTestCase
 
 		// Mock the login process for testing
 		$refresh_token = wp_auth_jwt_generate_token(64);
-		$this->auth_jwt->store_refresh_token($user_id, $refresh_token, time() + JWT_AUTH_REFRESH_TTL);
+		$this->auth_jwt->store_refresh_token($user_id, $refresh_token, time() + JMJAP_REFRESH_TTL);
 
 		// Test refresh endpoint
 		$request = new WP_REST_Request('POST', '/jwt/v1/refresh');
 
 		// Simulate HTTPOnly cookie
-		$_COOKIE[Auth_JWT::REFRESH_COOKIE_NAME] = $refresh_token;
+		$_COOKIE[JuanMa_JWT_Auth_Pro::REFRESH_COOKIE_NAME] = $refresh_token;
 
 		$response = $this->server->dispatch($request);
 
@@ -277,7 +277,7 @@ class RestAPIIntegrationTest extends WP_UnitTestCase
 		}
 
 		// Clean up
-		unset($_COOKIE[Auth_JWT::REFRESH_COOKIE_NAME]);
+		unset($_COOKIE[JuanMa_JWT_Auth_Pro::REFRESH_COOKIE_NAME]);
 	}
 
 	/**
@@ -303,15 +303,15 @@ class RestAPIIntegrationTest extends WP_UnitTestCase
 
 		// Generate refresh token
 		$refresh_token = wp_auth_jwt_generate_token(64);
-		$this->auth_jwt->store_refresh_token($user_id, $refresh_token, time() + JWT_AUTH_REFRESH_TTL);
+		$this->auth_jwt->store_refresh_token($user_id, $refresh_token, time() + JMJAP_REFRESH_TTL);
 
 		// Test refresh endpoint with cookie in HTTP_COOKIE header (not $_COOKIE)
 		$request = new WP_REST_Request('POST', '/jwt/v1/refresh');
 
 		// Simulate cross-origin REST API request where $_COOKIE isn't populated
 		// but cookie is in HTTP_COOKIE header
-		unset($_COOKIE[Auth_JWT::REFRESH_COOKIE_NAME]);
-		$_SERVER['HTTP_COOKIE'] = Auth_JWT::REFRESH_COOKIE_NAME . '=' . $refresh_token;
+		unset($_COOKIE[JuanMa_JWT_Auth_Pro::REFRESH_COOKIE_NAME]);
+		$_SERVER['HTTP_COOKIE'] = JuanMa_JWT_Auth_Pro::REFRESH_COOKIE_NAME . '=' . $refresh_token;
 
 		$response = $this->server->dispatch($request);
 
@@ -393,13 +393,13 @@ class RestAPIIntegrationTest extends WP_UnitTestCase
 	{
 		// Create expired token payload
 		$expired_payload = array(
-			'iss' => Auth_JWT::ISSUER,
+			'iss' => JuanMa_JWT_Auth_Pro::ISSUER,
 			'exp' => time() - 3600, // Expired 1 hour ago
 			'iat' => time() - 3600,
 			'sub' => 123,
 		);
 
-		$expired_token = wp_auth_jwt_encode($expired_payload, JWT_AUTH_PRO_SECRET);
+		$expired_token = wp_auth_jwt_encode($expired_payload, JMJAP_SECRET);
 
 		$request = new WP_REST_Request('GET', '/jwt/v1/verify');
 		$request->set_header('Authorization', 'Bearer ' . $expired_token);
