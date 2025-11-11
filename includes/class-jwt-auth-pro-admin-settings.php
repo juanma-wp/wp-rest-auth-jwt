@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Admin settings class for JWT Auth Pro plugin.
  * Extends BaseAdminSettings to leverage common settings functionality.
  */
-class JWT_Auth_Pro_Admin_Settings extends BaseAdminSettings {
+class JuanMa_JWT_Auth_Pro_Admin_Settings extends BaseAdminSettings {
 
 
 
@@ -199,11 +199,19 @@ class JWT_Auth_Pro_Admin_Settings extends BaseAdminSettings {
 			return;
 		}
 
+		// Enqueue admin CSS.
+		wp_enqueue_style(
+			'juanma-jwt-auth-pro-admin',
+			plugin_dir_url( __DIR__ ) . 'assets/admin.css',
+			array(),
+			JMJAP_VERSION
+		);
+
 		wp_enqueue_script(
 			'juanma-jwt-auth-pro-admin',
 			plugin_dir_url( __DIR__ ) . 'assets/admin.js',
 			array( 'jquery' ),
-			'1.0.0',
+			JMJAP_VERSION,
 			true
 		);
 
@@ -284,22 +292,6 @@ class JWT_Auth_Pro_Admin_Settings extends BaseAdminSettings {
 	private function render_api_docs_tab(): void {
 		$openapi_url = rest_url( 'jwt/v1/openapi' );
 		?>
-		<style>
-			.api-docs-container {
-				margin-top: 20px;
-				background: #fff;
-				border: 1px solid #ccc;
-				border-radius: 4px;
-			}
-
-			#swagger-ui {
-				max-width: 100%;
-			}
-
-			.topbar {
-				display: none;
-			}
-		</style>
 		<div class="api-docs-container">
 			<div id="swagger-ui"></div>
 		</div>
@@ -423,7 +415,7 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...</code></pre>
 				</ul>
 
 				<h4><?php esc_html_e( 'Debug Information:', 'juanma-jwt-auth-pro' ); ?></h4>
-				<p><strong><?php esc_html_e( 'Plugin Version:', 'juanma-jwt-auth-pro' ); ?></strong> <?php echo esc_html( JWT_AUTH_PRO_VERSION ); ?></p>
+				<p><strong><?php esc_html_e( 'Plugin Version:', 'juanma-jwt-auth-pro' ); ?></strong> <?php echo esc_html( JMJAP_VERSION ); ?></p>
 				<p><strong><?php esc_html_e( 'WordPress Version:', 'juanma-jwt-auth-pro' ); ?></strong> <?php echo esc_html( get_bloginfo( 'version' ) ); ?></p>
 				<p><strong><?php esc_html_e( 'PHP Version:', 'juanma-jwt-auth-pro' ); ?></strong> <?php echo esc_html( PHP_VERSION ); ?></p>
 				<p><strong><?php esc_html_e( 'SSL Enabled:', 'juanma-jwt-auth-pro' ); ?></strong> <?php echo is_ssl() ? esc_html__( '✅ Yes', 'juanma-jwt-auth-pro' ) : esc_html__( '❌ No (HTTPOnly cookies may not work)', 'juanma-jwt-auth-pro' ); ?></p>
@@ -466,8 +458,8 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...</code></pre>
 		$settings        = get_option( self::OPTION_JWT_SETTINGS, array() );
 		$database_secret = $settings['secret_key'] ?? '';
 
-		// Check if JWT_AUTH_PRO_SECRET is defined in wp-config.php.
-		$config_secret = defined( 'JWT_AUTH_PRO_SECRET' ) ? JWT_AUTH_PRO_SECRET : '';
+		// Check if JMJAP_SECRET is defined in wp-config.php.
+		$config_secret = defined( 'JMJAP_SECRET' ) ? JMJAP_SECRET : '';
 		$using_config  = ! empty( $config_secret );
 
 		// Show the active secret (config takes priority).
@@ -480,7 +472,7 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...</code></pre>
 			<p class="description">
 				<strong>✅ JWT Secret Key is defined in wp-config.php</strong><br>
 				This secret key from your wp-config.php file takes priority over database settings.
-				To use a different secret, remove the <code>JWT_AUTH_PRO_SECRET</code> constant from wp-config.php.
+				To use a different secret, remove the <code>JMJAP_SECRET</code> constant from wp-config.php.
 			</p>
 			<?php
 		} else {
@@ -490,32 +482,10 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...</code></pre>
 			<button type="button" id="toggle_jwt_secret" class="button">Show/Hide</button>
 			<p class="description">
 				A secure random string used to sign JWT tokens. Generate a new one or enter your own (minimum 32 characters recommended).<br>
-				<strong>Tip:</strong> For better security, define <code>JWT_AUTH_PRO_SECRET</code> in your wp-config.php file instead.
+				<strong>Tip:</strong> For better security, define <code>JMJAP_SECRET</code> in your wp-config.php file instead.
 			</p>
 			<?php
 		}
-		?>
-
-		<script>
-			jQuery(document).ready(function($) {
-				// Only bind generate secret if button exists (not readonly)
-				$('#generate_jwt_secret').click(function() {
-					const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
-					let secret = '';
-					for (let i = 0; i < 64; i++) {
-						secret += chars.charAt(Math.floor(Math.random() * chars.length));
-					}
-					$('#jwt_secret_key').val(secret);
-				});
-
-				// Toggle show/hide for both readonly and editable fields
-				$('#toggle_jwt_secret').click(function() {
-					const field = $('#jwt_secret_key');
-					field.attr('type', 'password' === field.attr('type') ? 'text' : 'password');
-				});
-			});
-		</script>
-		<?php
 	}
 
 	/**
@@ -525,8 +495,8 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...</code></pre>
 		$settings       = get_option( self::OPTION_JWT_SETTINGS, array() );
 		$database_value = $settings['access_token_expiry'] ?? 3600;
 
-		// Check if JWT_AUTH_PRO_ACCESS_TTL is defined in wp-config.php.
-		$config_value = defined( 'JWT_AUTH_PRO_ACCESS_TTL' ) ? JWT_AUTH_PRO_ACCESS_TTL : null;
+		// Check if JMJAP_ACCESS_TTL is defined in wp-config.php.
+		$config_value = defined( 'JMJAP_ACCESS_TTL' ) ? JMJAP_ACCESS_TTL : null;
 		$using_config = null !== $config_value;
 
 		// Show the active value (config takes priority).
@@ -545,7 +515,7 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...</code></pre>
 			<input type="number" id="jwt_access_token_expiry" name="<?php echo esc_attr( self::OPTION_JWT_SETTINGS ); ?>[access_token_expiry]" value="<?php echo esc_attr( $database_value ); ?>" min="300" max="86400" />
 			<p class="description">
 				How long access tokens remain valid in seconds. Default: 3600 (1 hour). Range: 300-86400 seconds.<br>
-				<strong>Tip:</strong> Define <code>JWT_AUTH_PRO_ACCESS_TTL</code> in wp-config.php for better control.
+				<strong>Tip:</strong> Define <code>JMJAP_ACCESS_TTL</code> in wp-config.php for better control.
 			</p>
 			<?php
 		}
@@ -558,8 +528,8 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...</code></pre>
 		$settings       = get_option( self::OPTION_JWT_SETTINGS, array() );
 		$database_value = $settings['refresh_token_expiry'] ?? 2592000;
 
-		// Check if JWT_AUTH_PRO_REFRESH_TTL is defined in wp-config.php.
-		$config_value = defined( 'JWT_AUTH_PRO_REFRESH_TTL' ) ? JWT_AUTH_PRO_REFRESH_TTL : null;
+		// Check if JMJAP_REFRESH_TTL is defined in wp-config.php.
+		$config_value = defined( 'JMJAP_REFRESH_TTL' ) ? JMJAP_REFRESH_TTL : null;
 		$using_config = null !== $config_value;
 
 		// Show the active value (config takes priority).
@@ -578,7 +548,7 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...</code></pre>
 			<input type="number" id="jwt_refresh_token_expiry" name="<?php echo esc_attr( self::OPTION_JWT_SETTINGS ); ?>[refresh_token_expiry]" value="<?php echo esc_attr( $database_value ); ?>" min="3600" max="31536000" />
 			<p class="description">
 				How long refresh tokens remain valid in seconds. Default: 2592000 (30 days). Range: 3600-31536000 seconds.<br>
-				<strong>Tip:</strong> Define <code>JWT_AUTH_PRO_REFRESH_TTL</code> in wp-config.php for better control.
+				<strong>Tip:</strong> Define <code>JMJAP_REFRESH_TTL</code> in wp-config.php for better control.
 			</p>
 			<?php
 		}

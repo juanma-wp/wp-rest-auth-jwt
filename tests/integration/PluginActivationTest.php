@@ -22,7 +22,7 @@ class PluginActivationTest extends WP_UnitTestCase
 	/**
 	 * Plugin instance for testing.
 	 *
-	 * @var JWT_Auth_Pro
+	 * @var JuanMa_JWT_Auth_Pro_Plugin
 	 */
 	private $plugin;
 
@@ -34,16 +34,16 @@ class PluginActivationTest extends WP_UnitTestCase
 		parent::setUp();
 
 		// Ensure plugin class is loaded.
-		if (! class_exists('JWT_Auth_Pro')) {
-			require_once dirname(__DIR__, 2) . '/jwt-auth-pro-wp-rest-api.php';
+		if (! class_exists('JuanMa_JWT_Auth_Pro_Plugin')) {
+			require_once dirname(__DIR__, 2) . '/juanma-jwt-auth-pro.php';
 		}
 
 		// Set required constants.
-		if (! defined('JWT_AUTH_PRO_SECRET')) {
-			define('JWT_AUTH_PRO_SECRET', 'test-secret-key-minimum-32-characters-long-for-testing');
+		if (! defined('JMJAP_SECRET')) {
+			define('JMJAP_SECRET', 'test-secret-key-minimum-32-characters-long-for-testing');
 		}
 
-		$this->plugin = new JWT_Auth_Pro();
+		$this->plugin = new JuanMa_JWT_Auth_Pro_Plugin();
 	}
 
 	/**

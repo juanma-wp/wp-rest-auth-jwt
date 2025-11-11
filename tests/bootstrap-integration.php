@@ -56,16 +56,16 @@ if ( file_exists( $_tests_dir . '/includes/functions.php' ) ) {
  */
 function _manually_load_jwt_plugin() {
 	// Define test constants for JWT
-	if ( ! defined( 'JWT_AUTH_PRO_SECRET' ) ) {
-		define( 'JWT_AUTH_PRO_SECRET', 'test-secret-key-for-testing-purposes-only-never-use-in-production-environment-this-should-be-long-and-random' );
+	if ( ! defined( 'JMJAP_SECRET' ) ) {
+		define( 'JMJAP_SECRET', 'test-secret-key-for-testing-purposes-only-never-use-in-production-environment-this-should-be-long-and-random' );
 	}
 
-	if ( ! defined( 'JWT_AUTH_ACCESS_TTL' ) ) {
-		define( 'JWT_AUTH_ACCESS_TTL', 3600 );
+	if ( ! defined( 'JMJAP_ACCESS_TTL' ) ) {
+		define( 'JMJAP_ACCESS_TTL', 3600 );
 	}
 
-	if ( ! defined( 'JWT_AUTH_REFRESH_TTL' ) ) {
-		define( 'JWT_AUTH_REFRESH_TTL', 86400 );
+	if ( ! defined( 'JMJAP_REFRESH_TTL' ) ) {
+		define( 'JMJAP_REFRESH_TTL', 86400 );
 	}
 
 	// Load the composer autoloader first

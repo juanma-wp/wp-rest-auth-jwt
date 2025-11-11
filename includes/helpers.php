@@ -141,13 +141,13 @@ function wp_auth_jwt_set_cookie(
 	?bool $secure = null
 ): bool {
 	// Get environment-aware configuration.
-	$config = JWT_Cookie_Config::get_config();
+	$config = JuanMa_JWT_Auth_Pro_Cookie_Config::get_config();
 
 	// Use provided values or fall back to auto-detected config.
 	$path     = $path ?? $config['path'];
 	$httponly = $httponly ?? $config['httponly'];
 	$secure   = $secure ?? $config['secure'];
-	$samesite = apply_filters( 'wp_auth_jwt_cookie_samesite', $config['samesite'] );
+	$samesite = apply_filters( 'juanma_jwt_auth_pro_cookie_samesite', $config['samesite'] );
 	$domain   = $config['domain'];
 
 	// Debug log the cookie configuration.
@@ -246,7 +246,7 @@ function wp_auth_jwt_format_user_data( $user, bool $include_sensitive = false ):
 	$user_data = Response::formatUser( $user, $include_sensitive );
 
 	// Apply WordPress filter to maintain backward compatibility.
-	return apply_filters( 'wp_auth_jwt_user_data', $user_data, $user, $include_sensitive );
+	return apply_filters( 'juanma_jwt_auth_pro_user_data', $user_data, $user, $include_sensitive );
 }
 
 /**

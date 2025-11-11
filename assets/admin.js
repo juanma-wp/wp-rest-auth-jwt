@@ -31,6 +31,12 @@ jQuery(document).ready(function($) {
         // Generate new secret key
         $('#generate-secret-key').on('click', generateSecretKey);
 
+        // Generate JWT secret button
+        $('#generate_jwt_secret').on('click', generateJWTSecret);
+
+        // Toggle show/hide JWT secret
+        $('#toggle_jwt_secret').on('click', toggleJWTSecret);
+
         // Test JWT generation
         $('#test-jwt-generation').on('click', testJWTGeneration);
 
@@ -121,6 +127,30 @@ jQuery(document).ready(function($) {
         const secretKey = generateRandomString(64);
         $('input[name="wp_rest_auth_jwt_settings[secret_key]"]').val(secretKey);
         showNotice('New secret key generated. Remember to save your settings.', 'info');
+    }
+
+    /**
+     * Generate JWT secret for the specific JWT secret field
+     */
+    function generateJWTSecret(e) {
+        if (e) e.preventDefault();
+
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+        let secret = '';
+        for (let i = 0; i < 64; i++) {
+            secret += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        $('#jwt_secret_key').val(secret);
+    }
+
+    /**
+     * Toggle show/hide for JWT secret field
+     */
+    function toggleJWTSecret(e) {
+        if (e) e.preventDefault();
+
+        const field = $('#jwt_secret_key');
+        field.attr('type', field.attr('type') === 'password' ? 'text' : 'password');
     }
 
     /**

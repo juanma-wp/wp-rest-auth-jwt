@@ -64,7 +64,6 @@ Thumbs.db
 /logs
 /mu-plugins
 *.sh
-composer.json
 
 /tests/e2e/node_modules/
 scripts/clean-toolkit.sh

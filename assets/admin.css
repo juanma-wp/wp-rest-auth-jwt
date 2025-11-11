@@ -1,0 +1,19 @@
+/**
+ * Admin styles for JuanMa JWT Auth Pro
+ */
+
+/* API Documentation styles */
+.api-docs-container {
+    margin-top: 20px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#swagger-ui {
+    max-width: 100%;
+}
+
+.topbar {
+    display: none;
+}

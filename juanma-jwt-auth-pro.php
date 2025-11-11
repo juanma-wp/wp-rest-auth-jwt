@@ -52,13 +52,13 @@ if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 	require_once __DIR__ . '/vendor/autoload.php';
 }
 
-define( 'JWT_AUTH_PRO_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'JWT_AUTH_PRO_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'JWT_AUTH_PRO_VERSION', '1.2.0' );
+define( 'JMJAP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'JMJAP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'JMJAP_VERSION', '1.2.0' );
 
 // Debug: Add a constant to check if plugin is loaded.
-if ( ! defined( 'JWT_AUTH_PRO_LOADED' ) ) {
-	define( 'JWT_AUTH_PRO_LOADED', true );
+if ( ! defined( 'JMJAP_LOADED' ) ) {
+	define( 'JMJAP_LOADED', true );
 }
 
 /**
@@ -66,7 +66,7 @@ if ( ! defined( 'JWT_AUTH_PRO_LOADED' ) ) {
  *
  * @package JM_JWTAuthPro
  */
-class JWT_Auth_Pro {
+class JuanMa_JWT_Auth_Pro_Plugin {
 
 
 
@@ -74,14 +74,14 @@ class JWT_Auth_Pro {
 	/**
 	 * Auth JWT instance.
 	 *
-	 * @var Auth_JWT
+	 * @var JuanMa_JWT_Auth_Pro
 	 */
 	private $auth_jwt;
 
 	/**
 	 * OpenAPI Spec instance.
 	 *
-	 * @var JWT_Auth_Pro_OpenAPI_Spec
+	 * @var JuanMa_JWT_Auth_Pro_OpenAPI_Spec
 	 */
 	private $openapi_spec;
 
@@ -110,15 +110,15 @@ class JWT_Auth_Pro {
 	 */
 	private function load_dependencies(): void {
 		// Load non-class files that contain helper functions.
-		require_once JWT_AUTH_PRO_PLUGIN_DIR . 'includes/helpers.php';
+		require_once JMJAP_PLUGIN_DIR . 'includes/helpers.php';
 
-		// The JWT_Auth_Pro_Admin_Settings class is namespaced but uses WordPress naming convention.
-		// It will be autoloaded via Composer classmap when needed (JM_JWTAuthPro\JWT_Auth_Pro_Admin_Settings).
+		// The JuanMa_JWT_Auth_Pro_Admin_Settings class is namespaced but uses WordPress naming convention.
+		// It will be autoloaded via Composer classmap when needed (JM_JWTAuthPro\JuanMa_JWT_Auth_Pro_Admin_Settings).
 
 		// Legacy files without namespaces still need require_once.
-		require_once JWT_AUTH_PRO_PLUGIN_DIR . 'includes/class-jwt-cookie-config.php';
-		require_once JWT_AUTH_PRO_PLUGIN_DIR . 'includes/class-auth-jwt.php';
-		require_once JWT_AUTH_PRO_PLUGIN_DIR . 'includes/class-openapi-spec.php';
+		require_once JMJAP_PLUGIN_DIR . 'includes/class-jwt-cookie-config.php';
+		require_once JMJAP_PLUGIN_DIR . 'includes/class-auth-jwt.php';
+		require_once JMJAP_PLUGIN_DIR . 'includes/class-openapi-spec.php';
 	}
 
 	/**
@@ -133,16 +133,16 @@ class JWT_Auth_Pro {
 
 		// The secret is critical and must be set either in wp-config.php or admin.
 		// We'll check for it when actually needed, not during initialization.
-		// Don't define JWT_AUTH_PRO_SECRET here - let Auth_JWT check admin settings when needed.
+		// Don't define JMJAP_SECRET here - let Auth_JWT check admin settings when needed.
 		// This avoids loading admin classes during plugin initialization.
 
 		// Set default token expiration times if not defined in wp-config.php.
-		if ( ! defined( 'JWT_AUTH_PRO_ACCESS_TTL' ) ) {
-			define( 'JWT_AUTH_PRO_ACCESS_TTL', 3600 ); // 1 hour default
+		if ( ! defined( 'JMJAP_ACCESS_TTL' ) ) {
+			define( 'JMJAP_ACCESS_TTL', 3600 ); // 1 hour default
 		}
 
-		if ( ! defined( 'JWT_AUTH_PRO_REFRESH_TTL' ) ) {
-			define( 'JWT_AUTH_PRO_REFRESH_TTL', 2592000 ); // 30 days default
+		if ( ! defined( 'JMJAP_REFRESH_TTL' ) ) {
+			define( 'JMJAP_REFRESH_TTL', 2592000 ); // 30 days default
 		}
 	}
 
@@ -154,7 +154,7 @@ class JWT_Auth_Pro {
 		if ( is_admin() ) {
 			// Check if the base class exists before trying to instantiate.
 			if ( class_exists( 'WPRestAuth\AuthToolkit\Admin\BaseAdminSettings' ) ) {
-				new JM_JWTAuthPro\JWT_Auth_Pro_Admin_Settings();
+				new JM_JWTAuthPro\JuanMa_JWT_Auth_Pro_Admin_Settings();
 			} else {
 				// Log error or show admin notice about missing dependency.
 				add_action(
@@ -170,8 +170,8 @@ class JWT_Auth_Pro {
 			}
 		}
 
-		$this->auth_jwt     = new Auth_JWT();
-		$this->openapi_spec = new JWT_Auth_Pro_OpenAPI_Spec();
+		$this->auth_jwt     = new JuanMa_JWT_Auth_Pro();
+		$this->openapi_spec = new JuanMa_JWT_Auth_Pro_OpenAPI_Spec();
 	}
 
 	/**
@@ -288,12 +288,18 @@ class JWT_Auth_Pro {
 
 		// Delete all refresh tokens from database table.
 		$table_name = $wpdb->prefix . 'jwt_refresh_tokens';
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "TRUNCATE TABLE {$table_name}" );
+
+		// Validate table name contains only safe characters (alphanumeric + underscore).
+		if ( ! preg_match( '/^[a-zA-Z0-9_]+$/', $table_name ) ) {
+			return; // Invalid table name, abort to prevent SQL injection.
+		}
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "TRUNCATE TABLE `{$table_name}`" );
 
 		// Drop the refresh tokens table.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$wpdb->query( "DROP TABLE IF EXISTS {$table_name}" );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS `{$table_name}`" );
 
 		// Delete WordPress options.
 		delete_option( 'jwt_auth_pro_settings' );
@@ -350,7 +356,7 @@ class JWT_Auth_Pro {
 	 */
 	public function check_jwt_secret(): void {
 		// Check if secret is defined in constant.
-		if ( defined( 'JWT_AUTH_PRO_SECRET' ) && JWT_AUTH_PRO_SECRET !== '' ) {
+		if ( defined( 'JMJAP_SECRET' ) && JMJAP_SECRET !== '' ) {
 			return;
 		}
 
@@ -372,9 +378,9 @@ class JWT_Auth_Pro {
 		echo '<div class="notice notice-error"><p>';
 		echo '<strong>JuanMa JWT Auth Pro:</strong> JWT Secret Key is required for the plugin to work. ';
 		echo '<a href="' . esc_url( $settings_url ) . '">Configure it in the plugin settings</a> ';
-		echo 'or define <code>JWT_AUTH_PRO_SECRET</code> in your wp-config.php file.';
+		echo 'or define <code>JMJAP_SECRET</code> in your wp-config.php file.';
 		echo '</p></div>';
 	}
 }
 
-new JWT_Auth_Pro();
+new JuanMa_JWT_Auth_Pro_Plugin();
