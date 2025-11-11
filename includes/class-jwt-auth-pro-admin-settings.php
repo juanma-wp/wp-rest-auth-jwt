@@ -204,14 +204,14 @@ class JuanMa_JWT_Auth_Pro_Admin_Settings extends BaseAdminSettings {
 			'juanma-jwt-auth-pro-admin',
 			plugin_dir_url( __DIR__ ) . 'assets/admin.css',
 			array(),
-			'1.0.0'
+			JMJAP_VERSION
 		);
 
 		wp_enqueue_script(
 			'juanma-jwt-auth-pro-admin',
 			plugin_dir_url( __DIR__ ) . 'assets/admin.js',
 			array( 'jquery' ),
-			'1.0.0',
+			JMJAP_VERSION,
 			true
 		);
 
