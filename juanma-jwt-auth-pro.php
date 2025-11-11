@@ -288,12 +288,14 @@ class JuanMa_JWT_Auth_Pro_Plugin {
 
 		// Delete all refresh tokens from database table.
 		$table_name = $wpdb->prefix . 'jwt_refresh_tokens';
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
-		$wpdb->query( $wpdb->prepare( "TRUNCATE TABLE %i", $table_name ) );
+		// Escape table name for security (compatible with WP < 6.2).
+		$escaped_table = esc_sql( $table_name );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "TRUNCATE TABLE `{$escaped_table}`" );
 
 		// Drop the refresh tokens table.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange
-		$wpdb->query( $wpdb->prepare( "DROP TABLE IF EXISTS %i", $table_name ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$wpdb->query( "DROP TABLE IF EXISTS `{$escaped_table}`" );
 
 		// Delete WordPress options.
 		delete_option( 'jwt_auth_pro_settings' );

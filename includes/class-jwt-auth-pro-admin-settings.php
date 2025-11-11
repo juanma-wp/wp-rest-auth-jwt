@@ -199,7 +199,7 @@ class JuanMa_JWT_Auth_Pro_Admin_Settings extends BaseAdminSettings {
 			return;
 		}
 
-		// Enqueue admin CSS
+		// Enqueue admin CSS.
 		wp_enqueue_style(
 			'juanma-jwt-auth-pro-admin',
 			plugin_dir_url( __DIR__ ) . 'assets/admin.css',
