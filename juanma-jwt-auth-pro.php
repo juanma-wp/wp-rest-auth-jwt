@@ -288,12 +288,12 @@ class JuanMa_JWT_Auth_Pro_Plugin {
 
 		// Delete all refresh tokens from database table.
 		$table_name = $wpdb->prefix . 'jwt_refresh_tokens';
-		
+
 		// Validate table name contains only safe characters (alphanumeric + underscore).
 		if ( ! preg_match( '/^[a-zA-Z0-9_]+$/', $table_name ) ) {
 			return; // Invalid table name, abort to prevent SQL injection.
 		}
-		
+
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		$wpdb->query( "TRUNCATE TABLE `{$table_name}`" );
 
