@@ -25,7 +25,7 @@ $table_name = $wpdb->prefix . 'jwt_refresh_tokens';
 // Validate table name contains only safe characters (alphanumeric + underscore).
 if ( preg_match( '/^[a-zA-Z0-9_]+$/', $table_name ) ) {
 	// Drop the refresh tokens table.
-	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 	$wpdb->query( "DROP TABLE IF EXISTS `{$table_name}`" );
 }
 
@@ -42,7 +42,7 @@ delete_transient( 'jwt_auth_pro_deactivation_notice' );
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching
 $wpdb->delete(
 	$wpdb->usermeta,
-	array( 'meta_key' => '_jwt_refresh_token_count' ),
+	array( 'meta_key' => '_jwt_refresh_token_count' ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 	array( '%s' )
 );
 
@@ -57,4 +57,4 @@ if ( is_multisite() ) {
 }
 
 // Note: Constants defined in wp-config.php cannot be removed programmatically.
-// Users must manually remove: JMJAP_SECRET, JMJAP_ACCESS_TTL, JMJAP_REFRESH_TTL
+// Users must manually remove: JMJAP_SECRET, JMJAP_ACCESS_TTL, JMJAP_REFRESH_TTL.
